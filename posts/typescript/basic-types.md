@@ -2,7 +2,7 @@
 title: "TypeScript 기본 타입 완벽 가이드"
 description: "TypeScript의 기본 타입들을 자세히 알아보고 실제 사용법을 배워봅니다."
 date: "2024-01-10"
-published: true
+published: false
 readTime: "6분"
 tags: ["TypeScript", "JavaScript", "Programming"]
 ---
