@@ -76,7 +76,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
             <ScrollButtons content={post.content} />
 
             {/* 콘텐츠 */}
-            <div className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-strong:text-gray-900 prose-code:text-gray-800 prose-pre:bg-gray-100 prose-pre:border prose-pre:border-gray-200">
+            <div className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-strong:text-gray-900 prose-code:text-gray-800 prose-pre:bg-gray-100 prose-pre:border prose-pre:border-gray-200 overflow-hidden">
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
                 components={{
@@ -89,7 +89,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
                     return (
                       <h1
                         id={id}
-                        className="text-3xl font-bold text-gray-900 mt-8 mb-4"
+                        className="text-3xl font-bold text-gray-900 mt-8 mb-4 break-words"
                       >
                         {children}
                       </h1>
@@ -104,7 +104,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
                     return (
                       <h2
                         id={id}
-                        className="text-2xl font-bold text-gray-900 mt-6 mb-3"
+                        className="text-2xl font-bold text-gray-900 mt-6 mb-3 break-words"
                       >
                         {children}
                       </h2>
@@ -119,7 +119,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
                     return (
                       <h3
                         id={id}
-                        className="text-xl font-bold text-gray-900 mt-4 mb-2"
+                        className="text-xl font-bold text-gray-900 mt-5 mb-2 break-words"
                       >
                         {children}
                       </h3>
@@ -134,7 +134,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
                     return (
                       <h4
                         id={id}
-                        className="text-lg font-bold text-gray-900 mt-3 mb-2"
+                        className="text-lg font-bold text-gray-900 mt-4 mb-2 break-words"
                       >
                         {children}
                       </h4>
@@ -149,7 +149,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
                     return (
                       <h5
                         id={id}
-                        className="text-base font-bold text-gray-900 mt-2 mb-1"
+                        className="text-base font-bold text-gray-900 mt-3 mb-2 break-words"
                       >
                         {children}
                       </h5>
@@ -164,14 +164,14 @@ export default async function BlogPage({ params }: BlogPageProps) {
                     return (
                       <h6
                         id={id}
-                        className="text-sm font-bold text-gray-900 mt-2 mb-1"
+                        className="text-sm font-bold text-gray-900 mt-3 mb-2 break-words"
                       >
                         {children}
                       </h6>
                     );
                   },
                   p: ({ children }) => (
-                    <p className="text-gray-700 mb-4 leading-relaxed">
+                    <p className="text-gray-700 mb-4 leading-relaxed break-words">
                       {children}
                     </p>
                   ),
@@ -181,41 +181,42 @@ export default async function BlogPage({ params }: BlogPageProps) {
                     </strong>
                   ),
                   em: ({ children }) => (
-                    <em className="italic text-gray-800">{children}</em>
+                    <em className="italic text-gray-700">{children}</em>
                   ),
-                  code: ({ children, className }) => {
-                    const language = className?.replace("language-", "");
-                    const isInlineCode = !className;
+                  code: ({ className, children }) => {
+                    const isInline = !className;
                     return (
                       <code
-                        className={`bg-gray-100 px-1 py-0.5 rounded text-sm font-mono ${
-                          isInlineCode ? "text-red-600" : "text-gray-800"
-                        }`}
+                        className={`${
+                          isInline
+                            ? "text-red-600 bg-red-50 px-1 py-0.5 rounded text-sm"
+                            : "text-gray-800"
+                        } break-words`}
                       >
                         {children}
                       </code>
                     );
                   },
                   pre: ({ children }) => (
-                    <pre className="bg-gray-100 border border-gray-200 rounded-lg p-4 overflow-x-auto mb-4 text-gray-800">
+                    <pre className="bg-gray-100 border border-gray-200 rounded-lg p-4 mb-4 overflow-x-auto whitespace-pre-wrap break-words">
                       {children}
                     </pre>
                   ),
                   ul: ({ children }) => (
-                    <ul className="list-disc list-inside mb-4 space-y-1 [&>li>ul]:ml-4 [&>li>ol]:ml-4 [&>li>ul>li>ul]:ml-4 [&>li>ol>li>ol]:ml-4">
+                    <ul className="list-disc list-inside mb-4 space-y-1 [&>li>ul]:ml-4">
                       {children}
                     </ul>
                   ),
                   ol: ({ children }) => (
-                    <ol className="list-decimal list-inside mb-4 space-y-1 [&>li>ul]:ml-4 [&>li>ol]:ml-4 [&>li>ul>li>ul]:ml-4 [&>li>ol>li>ol]:ml-4">
+                    <ol className="list-decimal list-inside mb-4 space-y-1 [&>li>ol]:ml-4">
                       {children}
                     </ol>
                   ),
                   li: ({ children }) => (
-                    <li className="text-gray-700">{children}</li>
+                    <li className="text-gray-700 break-words">{children}</li>
                   ),
                   blockquote: ({ children }) => (
-                    <blockquote className="border-l-4 border-gray-300 pl-4 italic text-gray-600 mb-4">
+                    <blockquote className="border-l-4 border-gray-300 pl-4 py-2 mb-4 bg-gray-50 italic text-gray-700 break-words">
                       {children}
                     </blockquote>
                   ),
@@ -368,7 +369,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
           <ScrollButtons content={post.content} />
 
           {/* 콘텐츠 */}
-          <div className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-strong:text-gray-900 prose-code:text-gray-800 prose-pre:bg-gray-100 prose-pre:border prose-pre:border-gray-200">
+          <div className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-p:text-gray-700 prose-strong:text-gray-900 prose-code:text-gray-800 prose-pre:bg-gray-100 prose-pre:border prose-pre:border-gray-200 overflow-hidden">
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
               components={{
@@ -381,7 +382,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
                   return (
                     <h1
                       id={id}
-                      className="text-3xl font-bold text-gray-900 mt-8 mb-4"
+                      className="text-3xl font-bold text-gray-900 mt-8 mb-4 break-words"
                     >
                       {children}
                     </h1>
@@ -396,7 +397,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
                   return (
                     <h2
                       id={id}
-                      className="text-2xl font-bold text-gray-900 mt-6 mb-3"
+                      className="text-2xl font-bold text-gray-900 mt-6 mb-3 break-words"
                     >
                       {children}
                     </h2>
@@ -411,7 +412,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
                   return (
                     <h3
                       id={id}
-                      className="text-xl font-bold text-gray-900 mt-4 mb-2"
+                      className="text-xl font-bold text-gray-900 mt-5 mb-2 break-words"
                     >
                       {children}
                     </h3>
@@ -426,7 +427,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
                   return (
                     <h4
                       id={id}
-                      className="text-lg font-bold text-gray-900 mt-3 mb-2"
+                      className="text-lg font-bold text-gray-900 mt-4 mb-2 break-words"
                     >
                       {children}
                     </h4>
@@ -441,7 +442,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
                   return (
                     <h5
                       id={id}
-                      className="text-base font-bold text-gray-900 mt-2 mb-1"
+                      className="text-base font-bold text-gray-900 mt-3 mb-2 break-words"
                     >
                       {children}
                     </h5>
@@ -456,14 +457,14 @@ export default async function BlogPage({ params }: BlogPageProps) {
                   return (
                     <h6
                       id={id}
-                      className="text-sm font-bold text-gray-900 mt-2 mb-1"
+                      className="text-sm font-bold text-gray-900 mt-3 mb-2 break-words"
                     >
                       {children}
                     </h6>
                   );
                 },
                 p: ({ children }) => (
-                  <p className="text-gray-700 mb-4 leading-relaxed">
+                  <p className="text-gray-700 mb-4 leading-relaxed break-words">
                     {children}
                   </p>
                 ),
@@ -482,32 +483,32 @@ export default async function BlogPage({ params }: BlogPageProps) {
                     <code
                       className={`bg-gray-100 px-1 py-0.5 rounded text-sm font-mono ${
                         isInlineCode ? "text-red-600" : "text-gray-800"
-                      }`}
+                      } break-words`}
                     >
                       {children}
                     </code>
                   );
                 },
                 pre: ({ children }) => (
-                  <pre className="bg-gray-100 border border-gray-200 rounded-lg p-4 overflow-x-auto mb-4 text-gray-800">
+                  <pre className="bg-gray-100 border border-gray-200 rounded-lg p-4 overflow-x-auto mb-4 text-gray-800 break-words">
                     {children}
                   </pre>
                 ),
                 ul: ({ children }) => (
-                  <ul className="list-disc list-inside mb-4 space-y-1 [&>li>ul]:ml-4 [&>li>ol]:ml-4 [&>li>ul>li>ul]:ml-4 [&>li>ol>li>ol]:ml-4">
+                  <ul className="list-disc list-inside mb-4 space-y-1 [&>li>ul]:ml-4">
                     {children}
                   </ul>
                 ),
                 ol: ({ children }) => (
-                  <ol className="list-decimal list-inside mb-4 space-y-1 [&>li>ul]:ml-4 [&>li>ol]:ml-4 [&>li>ul>li>ul]:ml-4 [&>li>ol>li>ol]:ml-4">
+                  <ol className="list-decimal list-inside mb-4 space-y-1 [&>li>ul]:ml-4">
                     {children}
                   </ol>
                 ),
                 li: ({ children }) => (
-                  <li className="text-gray-700">{children}</li>
+                  <li className="text-gray-700 break-words">{children}</li>
                 ),
                 blockquote: ({ children }) => (
-                  <blockquote className="border-l-4 border-gray-300 pl-4 italic text-gray-600 mb-4">
+                  <blockquote className="border-l-4 border-gray-300 pl-4 italic text-gray-600 mb-4 break-words">
                     {children}
                   </blockquote>
                 ),
