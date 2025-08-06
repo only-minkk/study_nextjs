@@ -1,7 +1,7 @@
 ---
 title: "Next.js App Router 강의 1강~6강"
 description: "Next.js 13부터 도입된 App Router의 모든 것을 알아봅니다."
-date: "2024-01-15"
+date: "2025-08-06"
 readTime: "8분"
 tags: ["Next.js", "App Router", "React"]
 ---
