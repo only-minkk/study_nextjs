@@ -622,3 +622,54 @@ export default function NavLinks() {
   );
 }
 ```
+
+# Chapter 6 : Setting Up Your Database
+
+이 장에서는 프로젝트를 GitHub에 푸시하고 즉시 미리 보기 및 배포를 위해 Vercel 계정을 설정하고 GitHub 리포지토리를 연결한다. 프로젝트를 생성하고 Postgres 데이터베이스에 연결한다. 초기 데이터로 데이터베이스를 시드하는 과정을 겪는다.
+
+## Create a Vercel account
+
+vercel.com/signup에 방문하여 계정을 만들고 무료 요금제를 선택한뒤 Github로 계속하기를 선택하여 GitHub와 Vercel 계정을 연결한다.
+
+## Connect and deploy your project
+
+깃헙 리포지토리를 import 해주고 프로젝트의 이름을 정하고 배포를 클릭한다.
+
+GitHub 리포지토리를 연결하면 메인 브랜치에 변경 사항을 푸시할 때마다 별도의 설정 없이 자동으로 애플리케이션을 다시 배포할 수 있다. 풀 리퀘스트를 열면 즉시 미리보기 URL이 제공되므로 배포 오류를 조기에 발견하고 팀원들고 프로젝트의 미리보기를 공유하여 피드백을 받을 수 있다.
+
+## Create a Postgres database
+
+다음으로 데이터베이스를 설정하려면 대시보드로 계속을 클릭하고 프로젝트 대시보드에서 저장소 탭을 선택한다. 데이터베이스 생성을 선택한다. Vercel 계정이 생성된 시기에 따라 Neon 또는 Supabase와 같은 옵션이 표시될 수 있다. 원하는 제공업체를 선택하고 계속을 클릭한다.
+
+필요한 경우 지역과 스토리지 요금제를 선택한다. 모든 Vercel 프로젝트의 기본 지역은 워싱턴 DC이며 데이터 요청의 지연 시간을 줄이려면 가능한 경우 이 지역을 선택하는 것이 좋다.
+
+연결되면 .env.local 탭으로 이동하여 비밀 표시를 클릭하고 코드를 복사한다. 비밀번호를 복사하기전에 비밀번호 공개를 먼저 해야한다.
+
+코드 편집기로 이동하여 `.env.example` 파일의 이름을 `.env`로 바꾸고 Vercel에서 복사한 내용을 붙여넣는다.
+_*`.gitignore`파일로 이동하여 `.env`가 무시된 파일에 있는지 확인하고 깃헙에 푸시할 때 데이터베이스의 비밀번호가 노출되지 않도록 해야한다.*_
+
+## Seed your database
+
+이제 데이터베이스가 생성되었으므로 초기 데이터로 데이터베이스를 채운다.
+브라우저에서 액세스할 수 있는 API가 포함되어 있어 시드 스크립트를 실행하여 데이터베이스를 초기 데이터 집합으로 채운다.
+이 스크립트는 SQL을 사용하여 테이블을 생성하고 `placeholder-data.ts`파일의 데이터를 사용하여 테이블이 생성된 후 테이블을 채운다.
+
+로컬 개발 서버가 `pnpm run dev`로 실행 중인지 확인하고 브라우저에서 `localhost:3000/seed`로 이동한다.
+
+완료되면 브라우저에 "Database seeded successfully`라는 메시지가 표시된다.
+완료되면 이 파일을 삭제할 수 있다.
+
+## Executing queries
+
+모든 것이 예상대로 작동하는지 확인하기 위해 쿼리를 실행한다.
+다른 라우터 핸들러인 `app/query/route.ts`를 사용하여 데이터베이스를 쿼리한다. 이 파일 안에는 다음과 같은 SQL 쿼리가 있는 `listInvoices()`함수가 있다.
+
+```SELECT invoices.amount, customers.name
+FROM invoices
+JOIN customers ON invoices.customer_id = customers.id
+WHERE invoices.amount = 666;
+```
+
+파일의 주석 처리를 해제하고 `Response.json()` 블록을 제거한 다음 브라우저에서 `localhost:3000?query`로 이동하면 인보이스 금액과 이름이 반환되는 것을 확인할 수 있다.
+
+반환되는 고객은 `Evit Rabbit`이다.
