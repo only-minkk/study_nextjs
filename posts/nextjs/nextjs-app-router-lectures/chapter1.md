@@ -482,3 +482,143 @@ export default function RootLayout({
 이를 루트 레이아웃이라고 하며 모든 Next.js 애플리케이션에 필요하다. 루트 레이아웃에 추가하는 모든 UI는 애플리케이션의 모든 페이지에서 공유된다. 루트 레이아웃을 사용하여 `<html>` 및 `<body>` 태그를 수정하고 메타데이터를 추가할 수 있다.
 
 방금 만든 새 레이아웃(`/app/dashboard/layout.tsx`)은 대시보드 페이지에 고유한 레이아웃이므로 위의 루트 레이아웃에 UI를 추가할 필요가 없다.
+
+# Chapter 5 : Navigating Between Pages
+
+이 장에서는 `next/link` 컴포넌트를 사용하는 방법을 다룬다.
+`usePathname()` 훅으로 활성 링크를 표시하는 방법, Next.js에서 탐색이 작동하는 방식을 배운다.
+
+## Why optimize navigation?
+
+페이지 간에 링크하려면 일반적으로 `<a>` HTML 요소를 사용한다.
+하지만 `<a>`는 각 페이지 탐색에 전체 페이지 새로고침을 하고 있다.
+
+## The <Link> component
+
+Next.js에서는 `<Link />` 컴포넌트를 사용하여 애플리케이션의 페이지 간에 링크를 연결할 수 있다. `<Link />`를 사용하면 자바스크립트로 클라이언트 측 탐색을 수행할 수 있다.
+
+`<Link />` 컴포넌트를 사용하려면 `/app/ui/dashboard/nav-links.tsx`를 열고 `next/link`에서 `Link` 컴포넌트를 가져온 뒤 `<a>` 태그를 `<Link>`로 바꾼다.
+
+```
+// /app/ui/dashboard/nav-links.tsx
+
+import {
+  UserGroupIcon,
+  HomeIcon,
+  DocumentDuplicateIcon,
+} from '@heroicons/react/24/outline';
+import Link from 'next/link';
+
+// ...
+
+export default function NavLinks() {
+  return (
+    <>
+      {links.map((link) => {
+        const LinkIcon = link.icon;
+        return (
+          <Link
+            key={link.name}
+            href={link.href}
+            className="flex h-[48px] grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3"
+          >
+            <LinkIcon className="w-6" />
+            <p className="hidden md:block">{link.name}</p>
+          </Link>
+        );
+      })}
+    </>
+  );
+}
+```
+
+`Link` 구성요소는 `<a>` 태그를 사용하는 것과 비슷하지만 `<a href="...">` 대신 `<Link href="...">`를 사용한다.
+
+작동을 확인해 보면 이제 전체 새로고침 없이 페이지들을 탐색할 수 있게 된다.
+애플리케이션의 일부가 서버에서 렌더링되지만 전체 페이지 새로고침이 없으므로 네이티브 웹 앱처럼 느껴진다.
+
+## Automatic code-splitting and prefetching
+
+탐색 환경을 개선하기 위해 Next.js는 경로 세그먼트별로 애플리케이션을 자동으로 코드 분할한다.
+이는 브라우저가 초기 페이지 로드 시 모든 애플리케이션 코드를 로드하는 기존의 React SPA와는 다르다.
+
+**경로별로 코드를 분할하면 페이지가 격리**된다. 특정 페이지에서 오류가 발생해도 나머지 애플리케이션은 계속 작동한다. 또한 브라우저가 파싱해야 할 코드가 줄어들어 애플리케이션 속도가 빨라진다. 또한 프**로덕션 환경에서 `<Link>` 컴포넌트가 브라우저의 뷰포트에 나타날 때마다 Next.js는 백그라운드에서 링크된 경로에 대한 코드를 자동으로 prefetching**한다. 사용자가 링크를 클릴할 때쯤이면 대상 페이지의 코드가 이미 백그라운드에서 로드되어 있으므로 페이지 전환이 거의 즉각적으로 이루어진다.
+
+## Pattern : Showing active links
+
+일반적인 UI 패턴은 사용자가 현재 어떤 페이지에 있는지 알려주는 활성 링크를 표시한다. 이렇게 하려면 URL에서 사용자의 현재 경로를 가져와야 한다. Next.js는 경로를 확인하고 이 패턴을 구현하는 데 사용할 수 있는 `usePathname()`이라는 훅을 제공한다.
+
+`usePathname()`은 React 훅이므로 `nav-links.tsx`를 클라이언트 컴포넌트로 전환해야 한다. 파일 상단에 React의 "use client" 지시문을 추가한 다음, `next/navigation`에서 `usePathname()`를 import한다.
+
+```
+// /app/ui/dashboard/nav-links.tsx
+
+'use client';
+
+import {
+  UserGroupIcon,
+  HomeIcon,
+  DocumentDuplicateIcon,
+} from '@heroicons/react/24/outline';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+
+// ...
+```
+
+다음으로, `<NavLinks />` 컴포넌트 내부의 `pathname`이라는 변수에 경로를 할당한다.
+
+```
+// /app/ui/dashboard/nav-links.tsx
+
+export default function NavLinks() {
+  const pathname = usePathname();
+  // ...
+}
+```
+
+CSS 스타일링 장에서 소개한 clsx 라이브러리를 사용하여 링크가 활성화되어 있을 때 클래스 이름을 조건부로 적용할 수 있다. link.href가 경로명과 일치하면 링크는 파란색 텍스트와 하늘색 배경으로 표시되어야 한다.
+
+```
+// /app/ui/dashboard/nav-links.tsx
+
+'use client';
+
+import {
+  UserGroupIcon,
+  HomeIcon,
+  DocumentDuplicateIcon,
+} from '@heroicons/react/24/outline';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import clsx from 'clsx';
+
+// ...
+
+export default function NavLinks() {
+  const pathname = usePathname();
+
+  return (
+    <>
+      {links.map((link) => {
+        const LinkIcon = link.icon;
+        return (
+          <Link
+            key={link.name}
+            href={link.href}
+            className={clsx(
+              'flex h-[48px] grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3',
+              {
+                'bg-sky-100 text-blue-600': pathname === link.href,
+              },
+            )}
+          >
+            <LinkIcon className="w-6" />
+            <p className="hidden md:block">{link.name}</p>
+          </Link>
+        );
+      })}
+    </>
+  );
+}
+```
