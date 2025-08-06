@@ -5,7 +5,7 @@ import {
   EyeIcon,
 } from "@heroicons/react/24/outline";
 import { lusitana } from "@/app/ui/fonts";
-import { getAllPosts, getAllCategories } from "@/app/lib/blog-loader";
+import { getPublishedPosts, getAllCategories } from "@/app/lib/blog-loader";
 
 const iconMap = {
   posts: DocumentTextIcon,
@@ -15,10 +15,10 @@ const iconMap = {
 };
 
 export default async function CardWrapper() {
-  const posts = getAllPosts();
+  const posts = getPublishedPosts(); // 공개 포스트만
   const categories = getAllCategories();
 
-  // 이번 달 포스트 수 계산
+  // 이번 달 공개 포스트 수 계산
   const currentMonth = new Date().getMonth();
   const currentYear = new Date().getFullYear();
   const monthlyPosts = posts.filter((post) => {

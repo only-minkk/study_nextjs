@@ -1,6 +1,7 @@
 import {
   getPostBySlug,
   getAllPosts,
+  getPublishedPosts,
   getAllCategories,
   getPostsByCategory,
 } from "@/app/lib/blog-loader";
@@ -527,7 +528,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
 
 // 정적 생성을 위한 메타데이터
 export async function generateStaticParams() {
-  const posts = getAllPosts();
+  const posts = getPublishedPosts(); // 공개 포스트만
   const categories = getAllCategories();
   const params: Array<{ category: string; slug: string[] }> = [];
 

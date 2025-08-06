@@ -1,6 +1,6 @@
 import { CalendarIcon } from "@heroicons/react/24/outline";
 import { lusitana } from "@/app/ui/fonts";
-import { getAllPosts } from "@/app/lib/blog-loader";
+import { getPublishedPosts } from "@/app/lib/blog-loader";
 
 interface MonthlyPostCount {
   month: string;
@@ -8,9 +8,9 @@ interface MonthlyPostCount {
 }
 
 export default async function BlogStatsChart() {
-  const allPosts = getAllPosts();
+  const allPosts = getPublishedPosts(); // 공개 포스트만
 
-  // 최근 12개월의 포스트 수 계산
+  // 최근 12개월의 공개 포스트 수 계산
   const monthlyData: MonthlyPostCount[] = [];
   const currentDate = new Date();
 

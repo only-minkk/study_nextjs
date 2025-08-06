@@ -13,6 +13,7 @@ export interface BlogPost {
   readTime: string;
   tags: string[];
   slug: string;
+  published: boolean; // true: 공개, false: 비공개
 }
 
 export interface BlogCategory {
@@ -43,9 +44,21 @@ function buildCategoryStructure(
         ? `${relativePath}/${item.name}`
         : item.name;
 
-      // 해당 디렉토리와 하위 디렉토리의 모든 포스트 수 계산
+      // 해당 디렉토리와 하위 디렉토리의 공개 포스트 수만 계산
       const allPosts = collectAllPosts(categoryPath, categoryRelativePath);
-      const postCount = allPosts.length;
+      const publishedPosts = allPosts.filter((post) => post.published);
+      const postCount = publishedPosts.length;
+
+      // // 디버깅 로그 추가
+      // if (item.name === "nextjs") {
+      //   console.log("=== Next.js 카테고리 디버깅 ===");
+      //   console.log("전체 포스트:", allPosts.length);
+      //   allPosts.forEach((post) => {
+      //     console.log(`- ${post.title}: published=${post.published}`);
+      //   });
+      //   console.log("공개 포스트:", publishedPosts.length);
+      //   console.log("최종 카운트:", postCount);
+      // }
 
       // 하위 디렉토리 탐색
       const subcategories = buildCategoryStructure(
@@ -131,6 +144,14 @@ function collectAllPosts(
         }
       }
 
+      // published 필드 명시적 처리
+      const published =
+        data.published === false
+          ? false
+          : data.published === true
+          ? true
+          : true;
+
       posts.push({
         id: `${category}-${subcategory ? `${subcategory}-` : ""}${slug}`,
         title: data.title || "제목 없음",
@@ -142,6 +163,7 @@ function collectAllPosts(
         readTime: data.readTime || "5분",
         tags: data.tags || [],
         slug,
+        published, // 명시적으로 처리된 값 사용
       });
     }
   }
@@ -162,11 +184,38 @@ export function getAllPosts(): BlogPost[] {
   );
 }
 
+// 공개 포스트만 반환
+export function getPublishedPosts(): BlogPost[] {
+  const posts = getAllPosts();
+  return posts.filter((post) => post.published);
+}
+
+// 모든 포스트 반환 (관리자용)
+export function getAllPostsIncludingPrivate(): BlogPost[] {
+  return getAllPosts();
+}
+
 export function getPostsByCategory(
   category: string,
   subcategory?: string
 ): BlogPost[] {
-  const allPosts = getAllPosts();
+  const allPosts = getPublishedPosts(); // 공개 포스트만
+
+  if (subcategory) {
+    return allPosts.filter(
+      (post) => post.category === category && post.subcategory === subcategory
+    );
+  }
+
+  return allPosts.filter((post) => post.category === category);
+}
+
+// 비공개 포스트 포함하여 카테고리별 포스트 반환 (관리자용)
+export function getPostsByCategoryIncludingPrivate(
+  category: string,
+  subcategory?: string
+): BlogPost[] {
+  const allPosts = getAllPosts(); // 모든 포스트
 
   if (subcategory) {
     return allPosts.filter(
@@ -182,7 +231,33 @@ export function getPostBySlug(
   slug: string,
   subcategory?: string
 ): BlogPost | null {
-  const allPosts = getAllPosts();
+  const allPosts = getPublishedPosts(); // 공개 포스트만
+
+  // 먼저 정확한 매칭을 시도
+  if (subcategory) {
+    const post = allPosts.find(
+      (post) =>
+        post.category === category &&
+        post.subcategory === subcategory &&
+        post.slug === slug
+    );
+    if (post) return post;
+  }
+
+  // 서브카테고리가 없는 경우 또는 서브카테고리 매칭이 실패한 경우
+  const post = allPosts.find(
+    (post) => post.category === category && post.slug === slug
+  );
+  return post || null;
+}
+
+// 비공개 포스트 포함하여 포스트 검색 (관리자용)
+export function getPostBySlugIncludingPrivate(
+  category: string,
+  slug: string,
+  subcategory?: string
+): BlogPost | null {
+  const allPosts = getAllPosts(); // 모든 포스트
 
   // 먼저 정확한 매칭을 시도
   if (subcategory) {

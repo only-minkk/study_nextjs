@@ -6,12 +6,12 @@ import {
 import clsx from "clsx";
 import Link from "next/link";
 import { lusitana } from "@/app/ui/fonts";
-import { getAllPosts } from "@/app/lib/blog-loader";
+import { getPublishedPosts } from "@/app/lib/blog-loader";
 
 export default async function LatestPosts() {
-  const allPosts = getAllPosts();
+  const allPosts = getPublishedPosts(); // 공개 포스트만
 
-  // 최근 5개 포스트만 가져오기 (날짜순 정렬)
+  // 최근 5개 공개 포스트만 가져오기 (날짜순 정렬)
   const latestPosts = allPosts
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 5);
