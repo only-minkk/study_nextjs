@@ -103,7 +103,7 @@ export default function NavLinks() {
                   "flex h-[36px] w-full items-center gap-2 rounded-md px-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600",
                   {
                     "bg-sky-100 text-blue-600": pathname.startsWith(
-                      `/dashboard/blog/${parentSlug}/${subcategory.slug}`
+                      `/blog/${parentSlug}/${subcategory.slug}`
                     ),
                   }
                 )}
